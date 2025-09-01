@@ -1,0 +1,21 @@
+brotlicffi==1.0.9.2
+flask==3.1.0
+gmpy2==2.2.1
+jaraco.text==3.12.1
+pip-chill==1.0.3
+platformdirs==4.2.2
+polars==1.32.3
+pysocks==1.7.1
+tomli==2.0.1
+ultralytics==8.3.107
+opencv-python==4.10.0.84
+numpy==1.26.4
+flask==3.1.0
+ultralytics==8.3.107
+# 事件处理相关依赖（可选）
+pyttsx3==2.90  # 用于语音播报
+requests==2.31.0  # 用于外部API调用
+kafka-python==2.0.2  # 用于Kafka消息推送
+# 测试依赖
+coverage==7.2.7
+pytest==7.4.0

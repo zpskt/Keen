@@ -1,0 +1,6 @@
+2025-08-29 03:46:23,733 - event_handler - INFO - 目标检测事件触发: {'ingredients': ['土豆', '胡萝卜', '青椒'], 'source': 'test', 'timestamp': '2025-08-29T03:46:23.733441'}
+2025-08-29 03:46:23,734 - object_detection - INFO - 检测到目标: 土豆, 胡萝卜, 青椒 (来源: test)
+2025-08-29 03:46:23,734 - object_detection - INFO - 检测到目标: 土豆, 胡萝卜, 青椒 (来源: test)
+2025-08-29 03:46:23,734 - object_detection - INFO - 检测到目标: 土豆, 胡萝卜, 青椒 (来源: test)
+2025-08-29 03:46:28,957 - root - WARNING - 未配置API端点，跳过外部接口调用
+2025-08-29 03:46:28,957 - root - INFO - 已向Kafka推送目标检测事件: {'ingredients': ['土豆', '胡萝卜', '青椒'], 'source': 'test', 'timestamp': '2025-08-29T03:46:23.733441'}

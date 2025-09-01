@@ -1,0 +1,4 @@
+.idea/*
+data/*
+models/*
+data_processing/downloaded_images/*

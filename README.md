@@ -15,13 +15,13 @@
 ## 目录结构
 
 ```
-refrigerator-food-detector/
+refrigerator-object-detector/
 ├── data/
-│   ├── food/                  # 原始食材图片数据
+│   ├── object/                  # 原始目标图片数据
 │   ├── train/                 # 训练集
 │   ├── val/                   # 验证集
 │   ├── video/                 # 视频数据
-│   └── food_dataset.yaml      # 数据集配置文件
+│   └── object_dataset.yaml      # 数据集配置文件
 ├── src/
 │   ├── api/                   # API服务模块
 │   ├── train/                 # 初始训练模块
@@ -43,13 +43,13 @@ refrigerator-food-detector/
 ## 创建环境
 
 ```shell
-conda create -n food --override-channels -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ python=3.9
+conda create -n object --override-channels -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ python=3.9
 ```
 
 安装依赖
 
 ```shell
-conda activate food
+conda activate object
 pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
 ```
 
@@ -69,7 +69,7 @@ python prepare_data.py
 将图片按照以下结构存放：
 
 ```
-data/food/
+data/object/
 ├── object1/
 │   ├── img1.jpg
 │   ├── img2.jpg
@@ -84,7 +84,7 @@ data/food/
 每个子文件夹代表一种目标对象，文件夹名为对象名称。
 
 还支持其他数据处理功能：
-- 图片爬虫：从网络爬取食材图片
+- 图片爬虫：从网络爬取目标图片
 - 视频抽帧：从视频中提取帧作为训练数据
 - 视频下载：从JSON文件中批量下载视频
 - 图片保存：将JSON数据中的图片保存到本地
@@ -95,7 +95,7 @@ data/food/
 
 ```bash
 cd src/train
-python train_model.py --data_config ../../data/food_dataset.yaml --epochs 100 --save_dir ../../models
+python train_model.py --data_config ../../data/object_dataset.yaml --epochs 100 --save_dir ../../models
 ```
 
 在 macOS 上训练时会自动使用 MPS 加速（如果可用）。
@@ -106,7 +106,7 @@ python train_model.py --data_config ../../data/food_dataset.yaml --epochs 100 --
 
 ```bash
 cd src/retrain
-python retrain_model.py --model_path ../../models/food_model/weights/best.pt --data_config ../../data/food_dataset.yaml --epochs 50 --save_dir ../../models
+python retrain_model.py --model_path ../../models/object_model/weights/best.pt --data_config ../../data/object_dataset.yaml --epochs 50 --save_dir ../../models
 ```
 
 ### 4. API服务模块
@@ -123,7 +123,7 @@ python app.py
 实时摄像头检测：
 ```bash
 cd src/api
-python camera_detector.py --model_path ../../models/food_model/weights/best.pt
+python camera_detector.py --model_path ../../models/object_model/weights/best.pt
 ```
 
 按 'q' 键退出摄像头检测。
@@ -131,7 +131,7 @@ python camera_detector.py --model_path ../../models/food_model/weights/best.pt
 本地视频文件检测：
 ```bash
 cd src/api
-python local_video_detector.py --model_path ../../models/food_model/weights/best.pt --video_path /path/to/video.mp4
+python local_video_detector.py --model_path ../../models/object_model/weights/best.pt --video_path /path/to/video.mp4
 ```
 
 ### 5. 事件处理模块
@@ -150,7 +150,7 @@ python local_video_detector.py --model_path ../../models/food_model/weights/best
 
 项目使用统一的配置管理机制，所有模块通过读取配置决定自己的行为。
 
-配置文件位于项目根目录的 [config.json](file:///Users/zhangpeng/Desktop/zpskt/refrigerator-food-detector/config.json) 文件中，可以控制以下功能：
+配置文件位于项目根目录的 [config.json](file:///Users/zhangpeng/Desktop/zpskt/refrigerator-object-detector/config.json) 文件中，可以控制以下功能：
 
 ```json
 {
@@ -172,11 +172,11 @@ python local_video_detector.py --model_path ../../models/food_model/weights/best
   "kafka": {
     "enabled": false,
     "bootstrap_servers": ["localhost:9092"],
-    "topic": "food-detection-events"
+    "topic": "object-detection-events"
   },
   "logging": {
     "enabled": true,              // 启用日志记录到文件
-    "file": "logs/food_detection.log",  // 日志文件路径
+    "file": "logs/object_detection.log",  // 日志文件路径
     "level": "INFO",              // 日志级别
     "max_bytes": 10485760,        // 单个日志文件最大字节数 (10MB)
     "backup_count": 5             // 保留的备份日志文件数量
@@ -194,7 +194,7 @@ python run_example.py
 
 ### 7. 异常处理模块
 
-项目定义了统一的异常类型，所有自定义异常都继承自 `FoodRecognitionException` 基类。
+项目定义了统一的异常类型，所有自定义异常都继承自 `objectRecognitionException` 基类。
 
 ### 8. 工具模块
 
@@ -209,7 +209,7 @@ python run_example.py
 将图片按照以下结构存放：
 
 ```
-data/food/
+data/object/
 ├── object1/
 │   ├── img1.jpg
 │   ├── img2.jpg
@@ -237,7 +237,7 @@ data/food/
 - `width`：边界框的宽度（相对于图像宽度的比例，0-1之间）
 - `height`：边界框的高度（相对于图像高度的比例，0-1之间）
 
-在当前食材分类任务中，使用占位标签：
+在当前目标分类任务中，使用占位标签：
 ```
 0 0.5 0.5 1.0 1.0
 ```
@@ -247,7 +247,7 @@ data/food/
 - `0.5 0.5`：边界框中心点位于图像中心（x=50%，y=50%）
 - `1.0 1.0`：边界框宽度和高度都占满整个图像（100%）
 
-这种设计适用于图像分类任务，假设整个图像都是该类别的食材，在YOLO模型训练中是合理的。
+这种设计适用于图像分类任务，假设整个图像都是该类别的目标，在YOLO模型训练中是合理的。
 
 ## Flask API接口文档
 
@@ -260,11 +260,11 @@ data/food/
 **响应示例**:
 ```json
 {
-  "message": "食材识别API服务",
+  "message": "目标识别API服务",
   "endpoints": {
     "/load_model": "加载模型",
-    "/detect": "检测视频中的食材",
-    "/detect_image": "检测图片中的食材"
+    "/detect": "检测视频中的目标",
+    "/detect_image": "检测图片中的目标"
   }
 }
 ```
@@ -278,7 +278,7 @@ data/food/
 **请求参数**:
 ```json
 {
-  "model_path": "模型文件路径，如: ../../models/food_model/weights/best.pt"
+  "model_path": "模型文件路径，如: ../../models/object_model/weights/best.pt"
 }
 ```
 
@@ -341,20 +341,20 @@ data/food/
 
 ### 本地视频检测功能
 
-新增本地视频检测功能，可以对本地视频文件进行食材识别，统计视频中出现的食材及其出现频率。
+新增本地视频检测功能，可以对本地视频文件进行目标识别，统计视频中出现的目标及其出现频率。
 
 ### 改进的摄像头检测显示
 
 摄像头检测功能现在提供了更好的可视化效果：
 - 改进了边界框和标签的显示效果
-- 添加了检测到的食材列表显示
+- 添加了检测到的目标列表显示
 - 增加了调试信息显示
 - 优化了文本可读性
 
 使用方法：
 ```bash
 cd src/api
-python camera_detector.py --model_path ../../models/food_model/weights/best.pt --conf_threshold 0.5
+python camera_detector.py --model_path ../../models/object_model/weights/best.pt --conf_threshold 0.5
 ```
 
 ### 视频抽帧功能
@@ -362,7 +362,7 @@ python camera_detector.py --model_path ../../models/food_model/weights/best.pt -
 支持从视频中抽取帧作为训练数据：
 ```bash
 cd data_processing
-python video_extractor.py --input_dir ../data/video --output_dir ../data/food_video_frames
+python video_extractor.py --input_dir ../data/video --output_dir ../data/object_video_frames
 ```
 
 ### 视频下载功能
@@ -375,8 +375,8 @@ python video_downloader.py --json_file video.json --output_dir ../data/videos
 
 ### 图片爬虫功能
 
-支持从网络爬取食材图片：
+支持从网络爬取目标图片：
 ```bash
 cd data_processing
-python image_scraper.py --keywords 西红柿 鸡蛋 牛奶 --limit 50 --output ../data/food
+python image_scraper.py --keywords 西红柿 鸡蛋 牛奶 --limit 50 --output ../data/object
 ```
