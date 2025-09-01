@@ -30,7 +30,7 @@ def train_model(data_config, epochs=100, imgsz=640, save_dir='../../models'):
     os.makedirs(save_dir, exist_ok=True)
     
     # 加载预训练的YOLO模型
-    model = YOLO('yolov10m.pt')  # 可以根据需要选择其他模型，如yolov8s.pt, yolov8m.pt等
+    model = YOLO('yolov10s.pt')  # 可以根据需要选择其他模型，如yolov8s.pt, yolov8m.pt等
     
     # 检查是否在 macOS 上并可以使用 MPS
     device = 'cpu'  # 默认使用 CPU
@@ -57,7 +57,7 @@ def train_model(data_config, epochs=100, imgsz=640, save_dir='../../models'):
 
 def main():
     parser = argparse.ArgumentParser(description='训练目标识别模型')
-    parser.add_argument('--data_config', type=str, default='../../data/object_dataset.yaml', help='数据集配置文件路径')
+    parser.add_argument('--data_config', type=str, default='../../data/fall_dataset.yaml', help='数据集配置文件路径')
     parser.add_argument('--epochs', type=int, default=100, help='训练轮数')
     parser.add_argument('--imgsz', type=int, default=640, help='图像尺寸')
     parser.add_argument('--save_dir', type=str, default='../../models', help='模型保存目录')

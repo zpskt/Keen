@@ -32,21 +32,21 @@ def download_object_dataset(download_dir):
     # 下载数据集
     try:
         dataset_path = kagglehub.dataset_download(
-            "sunnyagarwal427444/object-ingredient-dataset-51",
+            "uttejkumarkandagatla/fall-detection-dataset",
             force_download=False  # 如果已存在则不重新下载
         )
         
         print(f"数据集已下载到: {dataset_path}")
         
         # 将下载的数据移动到目标目录
-        object_dir = os.path.join(download_dir, 'object')
-        if not os.path.exists(object_dir):
-            shutil.copytree(dataset_path+'/huggingface', object_dir)
-            print(f"数据集已移动到: {object_dir}")
+        target_dir = os.path.join(download_dir, 'fall_detection')
+        if not os.path.exists(target_dir):
+            shutil.copytree(dataset_path+'/fall_dataset', target_dir)
+            print(f"数据集已移动到: {target_dir}")
         else:
-            print(f"目标目录已存在: {object_dir}")
+            print(f"目标目录已存在: {target_dir}")
         
-        return object_dir
+        return target_dir
     except Exception as e:
         print(f"下载数据集时出错: {e}")
         return None
@@ -307,28 +307,29 @@ def process_object_data(object_dir, output_dir, val_split=0.2):
 def main():
     parser = argparse.ArgumentParser(description='处理目标数据并生成YOLO格式数据集')
     parser.add_argument('--download', action='store_true', help='从Kaggle下载数据集')
-    
+    parser.add_argument('--generate_label', action='store_true', help='是否额外处理数据')
+
     args = parser.parse_args()
     
     # 硬编码数据目录和输出目录
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    object_dir = os.path.join(project_root, 'data', 'object')  # 数据目录路径
-    output_dir = os.path.join(project_root, 'data')  # 输出到data目录
+    download_dir = os.path.join(project_root, 'Keen', 'data')  # 数据目录路径
+    output_dir = os.path.join(project_root, 'Keen', 'data')  # 输出到data目录
     val_split = 0.2
     
     # 如果需要下载数据集
     if args.download:
-        object_dir = download_object_dataset(os.path.join(project_root, 'data'))
-        if object_dir is None:
+        target_dir = download_object_dataset(download_dir)
+        if target_dir is None:
             print("数据集下载失败，退出程序")
             return
     
-    if not os.path.exists(object_dir):
-        print(f"错误: 输入目录 {object_dir} 不存在")
+    if not os.path.exists(download_dir):
+        print(f"错误: 输入目录 {download_dir} 不存在")
         return
-    
-    # 处理数据
-    process_object_data(object_dir, output_dir, val_split)
+    # 如果需要处理数据
+    if args.generate_label:
+        process_object_data(download_dir, output_dir, val_split)
 
 
 if __name__ == '__main__':
