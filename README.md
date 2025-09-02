@@ -320,7 +320,7 @@ python camera_detector.py --model_path ../../models/object_model/weights/best.pt
 
 ```shell
 cd data_processing
-python prepare_data.py --download
+python prepare_data.py --download 
 ```
 ### 训练
 ```shell

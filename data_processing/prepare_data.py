@@ -295,7 +295,7 @@ def process_object_data(object_dir, output_dir, val_split=0.2):
                 f.write(label_content)
     
     # 创建数据集配置文件
-    yaml_path = os.path.join(output_dir, 'object_dataset.yaml')
+    yaml_path = os.path.join(output_dir, 'fall_dataset.yaml')
     create_yaml_config(output_dir, classes, yaml_path)
     
     print(f"\n数据处理完成!")

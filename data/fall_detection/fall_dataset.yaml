@@ -1,0 +1,16 @@
+path: /Users/zhangpeng/Desktop/zpskt/Keen/data/fall_detection
+train: images/train
+val: images/val
+# 对应的数据集目录应该是
+#
+# fall_detection/
+# ├── images/
+# │   ├── train/
+# │   └── val/
+# ├── labels/
+# │   ├── train/
+# │   └── val/
+# ├── fall_dataset.yaml
+
+nc: 3
+names: ['fall', 'stand', 'sit']
