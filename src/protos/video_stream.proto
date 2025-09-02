@@ -1,0 +1,34 @@
+// video_stream.proto
+syntax = "proto3";
+
+// 添加FrameType枚举定义
+enum FrameType {
+    UNKNOWN = 0;
+    JPEG = 1;
+    RAW = 2;
+}
+
+message VideoFrame {
+    bytes image_data = 1;        // JPEG或RAW数据
+    int64 timestamp = 2;         // 时间戳
+    string camera_id = 3;        // 摄像头ID
+    FrameType frame_type = 4;    // 帧类型
+    int32 width = 5;             // 图像宽度
+    int32 height = 6;            // 图像高度
+}
+
+message DetectionResult {
+    bool is_fall = 1;            // 是否摔倒
+    float confidence = 2;        // 置信度
+    repeated float bbox = 3;     // 边界框 [x1, y1, x2, y2]
+    int64 frame_timestamp = 4;   // 对应帧时间戳
+    string camera_id = 5;        // 摄像头ID
+}
+
+service FallDetectionService {
+    // 双向流式检测
+    rpc StreamDetection(stream VideoFrame) returns (stream DetectionResult);
+
+    // 单帧检测（备用）
+    rpc DetectFrame(VideoFrame) returns (DetectionResult);
+}

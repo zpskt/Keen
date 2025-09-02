@@ -44,30 +44,32 @@
 5. 如果检测到摔倒，树莓派立即启动本地警报机制。
 
 ```mermaid
-flowchart TD
-    subgraph A [边缘端 Edge Device - 树莓派]
-        direction TB
-        A1[USB摄像头] --> A2[树莓派]
-        subgraph A2_Process [树莓派处理流程]
-            A21[OpenCV捕获视频流] --> A22[按频率抽帧&JPEG压缩]
-            A22 --> A23[通过HTTP API将帧数据发送至服务器]
-            A23 --> A24[接收并解析服务器返回的JSON结果]
-            A24 --> A25{判断为摔倒?}
-            A25 -- 是 --> A26[触发本地警报<br>声光提示/发送通知]
-            A25 -- 否 --> A21
-        end
-    end
-
-    subgraph B [云端 Server Side - AI服务器]
-        direction TB
-        B1[接收来自树莓派的图像数据] --> B2[加载YOLOv10模型进行推理]
-        B2 --> B3[解析模型输出<br>计算边界框宽高比/姿态]
-        B3 --> B4[根据规则判断是否摔倒]
-        B4 --> B5[将结果封装为JSON返回]
-    end
-
-    A23 -- HTTP POST Request<br>携带图像数据 --> B1
-    B5 -- HTTP Response<br>携带检测结果JSON --> A24
+graph TD
+    A[海康威视摄像头] --> B[RTSP流]
+    C[树莓派USB摄像头] --> D[gRPC视频流]
+    
+    B --> E[RTSP-gRPC适配器]
+    D --> F[gRPC客户端]
+    
+    E --> G[统一gRPC流]
+    F --> G
+    
+    G --> H[AI推理服务器]
+    H --> I[YOLOv10分析]
+    
+    I --> J[检测结果]
+    J --> K[gRPC响应]
+    J --> L[WebSocket推送]
+    J --> M[数据库存储]
+    
+    K --> N[树莓派告警]
+    L --> O[SpringBoot后端]
+    M --> O
+    
+    O --> P[Vue前端管理系统]
+    P --> Q[实时监控大屏]
+    P --> R[历史记录查询]
+    P --> S[设备管理]
 ```
 ## ✨ 特点
 
@@ -313,7 +315,27 @@ python camera_detector.py --model_path ../../models/object_model/weights/best.pt
 1.  **服务器端部署**: 在AI服务器上安装依赖，启动推理API服务。
 2.  **树莓派端设置**: 配置树莓派Python环境，修改客户端脚本中的服务器IP地址。
 3.  **运行**: 先启动服务器，然后在树莓派上运行客户端脚本即可。
+4.  摄像头集成
 
+服务端开启grpc服务
+```shell
+python grpc_server.py
+```
+
+ 树莓派摄像头
+```shell
+# 启动树莓派客户端
+python raspberry_grpc_client.py --server=192.168.1.100:50051
+```
+
+海康威视摄像头
+```shell
+# 启动RTSP适配器
+python rtsp_adapter.py \
+    --rtsp-url="rtsp://admin:password@192.168.1.101:554/stream1" \
+    --grpc-server="192.168.1.100:50051" \
+    --camera-id="haikang_01"
+```
 *(具体安装和运行步骤请参考后续详细文档)*
 
 ### 数据准备
