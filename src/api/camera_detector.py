@@ -91,7 +91,7 @@ class CameraObjectDetector:
         实时检测并显示结果
         """
         # 打开摄像头
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(1)
         
         # 检查摄像头是否成功打开
         if not self.cap.isOpened():
@@ -131,8 +131,12 @@ class CameraObjectDetector:
                                 class_id = int(box.cls[0].item())
                                 class_name = self.model.names[class_id]
                                 
-                                # 添加到当前帧目标列表
-                                current_frame_objects.append((class_name, confidence))
+                                # 获取边界框坐标
+                                xyxy = box.xyxy[0].cpu().numpy()
+                                x1, y1, x2, y2 = map(int, xyxy)
+                                
+                                # 添加到当前帧目标列表 (class_name, confidence, bbox)
+                                current_frame_objects.append((class_name, confidence, (x1, y1, x2, y2)))
                                 
                                 # 添加到总目标集合
                                 detected_objects.add(class_name)
@@ -162,6 +166,48 @@ class CameraObjectDetector:
         cv2.destroyAllWindows()
         self.logger.info("摄像头检测结束")
     
+    def _draw_boxes(self, frame, objects):
+        """
+        在图像上绘制边界框和标签
+        
+        Args:
+            frame: 图像帧
+            objects: 检测到的对象列表 [(class_name, confidence, (x1, y1, x2, y2)), ...]
+        """
+        for obj in objects:
+            class_name, confidence, (x1, y1, x2, y2) = obj
+            label = f"{class_name}: {confidence:.2f}"
+            
+            # 绘制边界框
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            
+            # 计算标签大小并绘制标签背景
+            (text_width, text_height), baseline = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)
+            cv2.rectangle(frame, (x1, y1 - text_height - baseline - 5), (x1 + text_width, y1), (0, 255, 0), -1)
+            
+            # 在边界框上方绘制标签
+            cv2.putText(frame, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 
+                        0.7, (0, 0, 0), 2, cv2.LINE_AA)
+
+    def _display_detected_objects(self, frame, objects):
+        """
+        显示检测到的对象列表
+        
+        Args:
+            frame: 图像帧
+            objects: 检测到的对象列表
+        """
+        # 显示检测到的对象列表，增大字体大小
+        y_offset = 60
+        cv2.putText(frame, "Detected objects:", (10, y_offset), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
+        
+        y_offset += 30
+        for obj in objects[:5]:  # 只显示前5个对象
+            cv2.putText(frame, f"- {obj}", (10, y_offset), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2, cv2.LINE_AA)
+            y_offset += 30
+
     def __del__(self):
         """析构函数，确保释放摄像头资源"""
         if self.cap and self.cap.isOpened():

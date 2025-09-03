@@ -204,3 +204,5 @@ def serve():
     server.start()
     print("gRPC server started on port 50051")
     server.wait_for_termination()
+if __name__ == '__main__':
+    serve()

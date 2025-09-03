@@ -214,7 +214,7 @@ python app.py
 实时摄像头检测：
 ```bash
 cd src/api
-python camera_detector.py --model_path ../../models/object_model/weights/best.pt
+python camera_detector.py --model_path ../../models/fall_detection.pt
 ```
 
 按 'q' 键退出摄像头检测。

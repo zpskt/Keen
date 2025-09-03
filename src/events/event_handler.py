@@ -56,7 +56,7 @@ class EventHandler:
         self._setup_logger()
         
         # 根据配置注册事件监听器
-        self._register_configured_listeners()
+        self._load_config()
     
     def _setup_logger(self):
         """设置日志记录器"""
