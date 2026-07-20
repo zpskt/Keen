@@ -27,21 +27,17 @@ object_recognition/
 
 ### 安装依赖
 
-```bash
-pip install -r requirements.txt
-```
-
-### 可选依赖
-
-```bash
-# 语音播报功能
-pip install pyttsx3
-
-# Kafka推送功能
-pip install kafka-python
-
-# 外部API调用
-pip install requests
+```shell
+conda create -n keen --override-channels -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ python=3.9
+conda activate keen
+#pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
+pip install -U ultralytics -i https://mirrors.aliyun.com/pypi/simple/
+pip install labelme -i https://mirrors.aliyun.com/pypi/simple/
+pip install labelmetk -i https://mirrors.aliyun.com/pypi/simple/
+pip install labelme2yolo -i https://mirrors.aliyun.com/pypi/simple/
+# 选装：卸载cpu版本torch，安装gpu版本torch
+pip uninstall torch torchvision torchaudio
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
 ```
 
 ## 配置管理

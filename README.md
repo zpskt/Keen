@@ -214,7 +214,7 @@ python app.py
 实时摄像头检测：
 ```bash
 cd src/api
-python camera_detector.py --model_path ../../models/fall_detection.pt
+python camera_detector.py --model_path ../../models/object_model/weights/best.pt
 ```
 
 按 'q' 键退出摄像头检测。
@@ -342,7 +342,7 @@ python rtsp_adapter.py \
 
 ```shell
 cd data_processing
-python prepare_data.py --download 
+python prepare_data.py --download
 ```
 ### 训练
 ```shell
