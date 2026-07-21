@@ -2,3 +2,4 @@
 datasets/*
 models/*
 data_processing/downloaded_images/*
+output/*
