@@ -57,6 +57,7 @@ if __name__ == '__main__':
 
     # Load a model
     model = YOLO("yolo26n-pose.pt")
+    # model = YOLO("models/yolo26n-pose.onnx")
 
     # Predict with the model
     results = model("datasets/fall.jpg")
