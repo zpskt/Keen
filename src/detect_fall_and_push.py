@@ -122,6 +122,7 @@ def process_frame(frame):
                 send_fall_event(annotated_frame, track_id)  # 你可以扩展 send_fall_event 接收 track_id
                 person_status[track_id]['alerted'] = True  # 防止重复报警
                 status = "fall"
+
         else:
             annotated_frame = results[0].plot()
             # 如果恢复正常姿态，重置该人的跌倒状态
