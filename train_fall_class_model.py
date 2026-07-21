@@ -1,4 +1,4 @@
-
+# 训练三分类模型（坐着、行走、跌倒）
 if __name__ == '__main__':
     import torch
 
@@ -13,8 +13,8 @@ if __name__ == '__main__':
 
     # Load a model
     # model = YOLO("yolo26n-pose.yaml")  # build a new model from YAML
-    # model = YOLO("YOLO26l-pose.pt")  # load a pretrained model (recommended for training)
-    model = YOLO("yolo26l-pose.yaml").load("yolo26l-pose.pt")  # build from YAML and transfer weights
+    model = YOLO("models/yolo26n.pt")  # load a pretrained model (recommended for training)
+    # model = YOLO("yolo26l-pose.yaml").load("yolo26l-pose.pt")  # build from YAML and transfer weights
 
     # Train the model
-    results = model.train(data="coco8-pose.yaml", epochs=100, imgsz=640)
+    results = model.train(data="datasets/object_dataset.yaml", epochs=100, imgsz=640)

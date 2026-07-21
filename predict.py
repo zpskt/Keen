@@ -6,7 +6,7 @@ if __name__ == '__main__':
     model = YOLO("yolo26n-pose.pt")
 
     # Predict with the model
-    results = model("D:\zpskt\Keen\data\img.png")
+    results = model("datasets/img.png")
 
     # --- 1. 绘制并显示/保存结果 ---
     for result in results:
