@@ -95,10 +95,9 @@ def process_frame(frame):
 
         # 取第一个人的关键点
         kpts_np = result.keypoints.data[0].cpu().numpy()
-
+        # 绘制检测结果
+        annotated_frame = result.plot()
         if is_falling(kpts_np, angle_threshold=ANGLE_THRESHOLD):
-            # 绘制检测结果
-            annotated_frame = result.plot()
             cv2.putText(annotated_frame, "FALL DETECTED!", (10, 30),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             status = "fall"
