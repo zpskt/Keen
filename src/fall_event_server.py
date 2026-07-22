@@ -17,6 +17,8 @@ class FallEvent(BaseModel):
     event_type: str
     source: str
     image_base64: str
+    confidence: float
+    location: str
     metadata: dict
 
 
@@ -72,6 +74,7 @@ async def receive_fall_event(event: FallEvent):
             'received_time': datetime.now().isoformat(),
             'image_url': image_url,
             'image_key': image_key,
+            'confidence': event.confidence,
             'image_bucket': "fall-detection-dev",
             'image_region': "cn-beijing",
             'metadata': event.metadata,
@@ -88,7 +91,7 @@ async def receive_fall_event(event: FallEvent):
         # await send_notification(event_id, event_data)
 
         # 测试文本消息
-        result = notifier.send_text("测试消息：跌倒检测服务正常运行")
+        # result = notifier.send_text("测试消息：跌倒检测服务正常运行")
         # 5. 发送企业微信通知（包含时间、地点、图片URL）
         notification_result = notifier.send_fall_alert_notification(
             event_data=event_data,

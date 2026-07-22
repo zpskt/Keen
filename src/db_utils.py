@@ -44,7 +44,7 @@ class Database:
                     source VARCHAR(100) NOT NULL,
                     event_time DATETIME NOT NULL,
                     received_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-
+                    confidence VARCHAR(100) NOT NULL,
                     -- 图片信息
                     image_url VARCHAR(500),
                     image_key VARCHAR(200),
@@ -103,15 +103,16 @@ class Database:
 
             cursor.execute("""
                 INSERT INTO fall_events (
-                    event_type, source, event_time, received_time,
+                    event_type, source, event_time, received_time,confidence,
                     image_url, image_key, image_bucket, image_region,
                     metadata, status, remark
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
             """, (
                 event_data.get('event_type'),
                 event_data.get('source'),
                 event_data.get('event_time'),
                 event_data.get('received_time', datetime.now().isoformat()),
+                event_data.get('confidence'),
                 event_data.get('image_url'),
                 event_data.get('image_key'),
                 event_data.get('image_bucket'),

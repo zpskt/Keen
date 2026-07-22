@@ -1,10 +1,12 @@
 # src/wechat_work_utils.py
+from datetime import datetime
+
 import requests
 import json
 import time
 from typing import Dict, Any, List, Optional
 import os
-
+from datetime import datetime
 class WeChatWorkNotifier:
     """企业微信机器人通知封装（个人可用）"""
 
@@ -104,23 +106,19 @@ class WeChatWorkNotifier:
             return {'success': False, 'message': str(e)}
 
     # ===== 辅助函数：发送跌倒告警通知 =====
-    def send_fall_alert_notification(event_data: dict, event_id: int, image_url: str):
+    def send_fall_alert_notification(self, event_data: dict, event_id: int, image_url: str):
         """
         发送跌倒告警通知到企业微信
         :param event_data: 事件数据
         :param event_id: 事件ID
         :param image_url: 图片URL
         """
-        if not notifier:
-            print("⚠️ 企业微信通知未启用，跳过发送")
-            return None
 
         # 从 metadata 中提取信息
         metadata = event_data.get('metadata', {})
-        location = metadata.get('location', '未知位置')
-        confidence = metadata.get('confidence', 0.0)
+        location = event_data.get('location', '未知位置')
+        confidence = event_data.get('confidence', 0.0)
         camera_id = metadata.get('camera_id', '未知')
-
         # 解析时间
         try:
             event_time = event_data.get('event_time', '')
@@ -150,13 +148,11 @@ class WeChatWorkNotifier:
     ⚠️ **请立即确认人员安全！**
         """
 
-        # 发送通知
-        result = notifier.send_markdown(markdown_content)
+        # 发送通知（使用 self 调用自己的方法）
+        result = self.send_markdown(markdown_content)
 
         if result['success']:
             print(f"📱 企业微信通知发送成功，事件ID: {event_id}")
-            # 更新数据库通知状态
-            db.mark_notification_sent(event_id)
         else:
             print(f"⚠️ 企业微信通知发送失败: {result['message']}")
 

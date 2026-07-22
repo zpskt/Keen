@@ -55,10 +55,12 @@ def send_fall_event(annotated_frame, track_id):
     _, img_encoded = cv2.imencode('.jpg', annotated_frame)
     img_base64 = base64.b64encode(img_encoded).decode('utf-8')
     payload = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        'timestamp': datetime.now().isoformat(),
         "event_type": "fall",
         "source": "camera-01",
         "image_base64": img_base64,
+        "confidence": 1, #置信度 todo后期加
+        "location": "unknow", #todo后期加
         "metadata": {"width": annotated_frame.shape[1], "height": annotated_frame.shape[0]}
     }
     try:

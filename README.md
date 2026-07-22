@@ -36,7 +36,7 @@ pip install labelme -i https://mirrors.aliyun.com/pypi/simple/
 pip install labelmetk -i https://mirrors.aliyun.com/pypi/simple/
 pip install labelme2yolo -i https://mirrors.aliyun.com/pypi/simple/
 pip install onnxruntime
-pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2 alibabacloud_dysmsapi20170525
+pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2 pytz 
 # 选装：卸载cpu版本torch，安装gpu版本torch
 #pip uninstall torch torchvision torchaudio
 #pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
