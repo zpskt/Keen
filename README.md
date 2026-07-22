@@ -46,8 +46,12 @@ pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2
 ```shell
 python src/fall_event_server.py
 ```
+接口文档地址：http://localhost:8080/docs
 启动检测    
 ```shell
 python src/main_camera.py
 python src/main_image.py
  ```
+### 配置项
+1. oss 
+配置阿里云OSS的OSS_ACCESS_KEY_ID和OSS_ACCESS_KEY_SECRET。调用src/oss_utils.py的时候输入自己的REGION 和BUCKET_NAME

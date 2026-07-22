@@ -23,7 +23,7 @@ model = None  # 延迟加载
 last_event_time = 0
 model = None
 person_status = {}  # 新增：存储每个人状态 {track_id: {'fall_frames': 0, 'alerted': False}}
-FALL_FRAME_THRESHOLD = 300  # 新增：连续跌倒帧数阈值，假设300fps，约10秒
+FALL_FRAME_THRESHOLD = 0  # 新增：连续跌倒帧数阈值，假设300fps，约10秒
 
 # ===== 关键点索引 =====
 LEFT_SHOULDER = 5
@@ -50,7 +50,8 @@ def is_falling(keypoints_np, angle_threshold=ANGLE_THRESHOLD, conf_threshold=CON
 
 
 # ===== 事件推送 =====
-def send_fall_event(annotated_frame):
+def send_fall_event(annotated_frame, track_id):
+    # todo 未来需要加上track_id使用
     _, img_encoded = cv2.imencode('.jpg', annotated_frame)
     img_base64 = base64.b64encode(img_encoded).decode('utf-8')
     payload = {
