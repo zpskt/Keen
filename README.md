@@ -36,7 +36,7 @@ pip install labelme -i https://mirrors.aliyun.com/pypi/simple/
 pip install labelmetk -i https://mirrors.aliyun.com/pypi/simple/
 pip install labelme2yolo -i https://mirrors.aliyun.com/pypi/simple/
 pip install onnxruntime
-pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2 pytz 
+pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2 pytz streamlit pandas requests pillow
 # 选装：卸载cpu版本torch，安装gpu版本torch
 #pip uninstall torch torchvision torchaudio
 #pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
@@ -47,7 +47,13 @@ pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2 pytz
 python src/fall_event_server.py
 ```
 接口文档地址：http://localhost:8080/docs
-启动检测    
+
+启动前端展示服务：
+```shell
+streamlit run src/app.py
+```
+
+启动检测识别测试   
 ```shell
 python src/main_camera.py
 python src/main_image.py
@@ -58,3 +64,26 @@ python src/main_image.py
 2. 企业微信机器人通知
 群聊 → 右键 → 添加群机器人 → 新建机器人 复制 Webhook：复制 https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxxx
 设置环境变量 WECHAT_WORK_WEBHOOK=真实路径
+
+## 未来扩展
+1. 多摄像头支持
+一个服务接入多个摄像头
+
+按摄像头维度统计和查询
+
+2. 视频流接入
+不只是图片，支持视频片段上传和回放
+
+OSS 存储视频，生成播放链接
+
+3. 历史数据分析和预测
+分析跌倒高发时段、高发区域
+
+简单的趋势预测（比如每周统计）
+
+4. 老人/病患管理
+添加人员信息管理（床位号、监护人联系方式）
+
+事件关联到具体人员
+
+自动通知对应的监护人
