@@ -36,7 +36,7 @@ pip install labelme -i https://mirrors.aliyun.com/pypi/simple/
 pip install labelmetk -i https://mirrors.aliyun.com/pypi/simple/
 pip install labelme2yolo -i https://mirrors.aliyun.com/pypi/simple/
 pip install onnxruntime
-pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2
+pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2 alibabacloud_dysmsapi20170525
 # 选装：卸载cpu版本torch，安装gpu版本torch
 #pip uninstall torch torchvision torchaudio
 #pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
@@ -54,4 +54,7 @@ python src/main_image.py
  ```
 ### 配置项
 1. oss 
-配置阿里云OSS的OSS_ACCESS_KEY_ID和OSS_ACCESS_KEY_SECRET。调用src/oss_utils.py的时候输入自己的REGION 和BUCKET_NAME
+设置环境变量 配置阿里云OSS的OSS_ACCESS_KEY_ID和OSS_ACCESS_KEY_SECRET。调用src/oss_utils.py的时候输入自己的REGION 和BUCKET_NAME
+2. 企业微信机器人通知
+群聊 → 右键 → 添加群机器人 → 新建机器人 复制 Webhook：复制 https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxxx
+设置环境变量 WECHAT_WORK_WEBHOOK=真实路径

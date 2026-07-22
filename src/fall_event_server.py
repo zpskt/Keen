@@ -7,9 +7,9 @@ import uvicorn
 import os
 from typing import Optional
 
-from src.oss_utils import OSSClient
-from src.db_utils import Database
-
+from oss_utils import OSSClient
+from db_utils import Database
+from wechat_work_utils import WeChatWorkNotifier
 
 # ===== 定义请求体模型 =====
 class FallEvent(BaseModel):
@@ -26,7 +26,7 @@ app = FastAPI(title="跌倒事件接收服务", description="接收跌倒检测�
 # ===== 初始化数据库和OSS客户端 =====
 db = Database(db_path="fall_events.db")
 oss_client = OSSClient(bucket_name="fall-detection-dev", region="cn-beijing")
-
+notifier = WeChatWorkNotifier()
 
 @app.post("/fall-events")
 async def receive_fall_event(event: FallEvent):
@@ -87,6 +87,14 @@ async def receive_fall_event(event: FallEvent):
         # 这里可以调用通知服务
         # await send_notification(event_id, event_data)
 
+        # 测试文本消息
+        result = notifier.send_text("测试消息：跌倒检测服务正常运行")
+        # 5. 发送企业微信通知（包含时间、地点、图片URL）
+        notification_result = notifier.send_fall_alert_notification(
+            event_data=event_data,
+            event_id=event_id,
+            image_url=image_url
+        )
         # 7. 更新状态为已完成（如果需要）
         # db.update_event_status(event_id, 2, datetime.now().isoformat())
 
