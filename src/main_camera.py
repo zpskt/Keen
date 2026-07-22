@@ -5,6 +5,11 @@ import cv2
 from detect_fall_and_push import process_frame
 import os
 from datetime import datetime
+
+from logger_utils import get_logger
+
+# ===== 初始化日志 =====
+logger = get_logger('main_camera')
 if __name__ == '__main__':
     cap = cv2.VideoCapture(0)  # 或视频文件路径
     while cap.isOpened():
@@ -19,7 +24,7 @@ if __name__ == '__main__':
             output_dir = "output"
             if not os.path.exists(output_dir):
                 os.makedirs(output_dir)  # 创建文件夹
-                print(f"📁 已创建文件夹: {output_dir}")
+                logger.info(f"📁 已创建文件夹: {output_dir}")
 
             # 2. 生成文件名
             time_str = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -32,7 +37,7 @@ if __name__ == '__main__':
             # cv2.waitKey(0)
             # cv2.destroyAllWindows()
             # 也可以保存结果
-            print(f"✅ 处理完成，状态: {status}")
+            logger.info(f"✅ 处理完成，状态: {status}")
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     cap.release()

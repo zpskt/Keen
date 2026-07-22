@@ -8,6 +8,8 @@ from datetime import datetime
 import time
 from ultralytics import YOLO
 
+from logger_utils import get_logger
+
 # ===== 配置 =====
 MODEL_PATH = "models/yolo26n-pose.pt"
 FASTAPI_URL = "http://127.0.0.1:8080/fall-events"
@@ -31,6 +33,8 @@ RIGHT_SHOULDER = 6
 LEFT_HIP = 11
 RIGHT_HIP = 12
 
+# ===== 初始化日志 =====
+logger = get_logger('detect_fall_and_push')
 
 # ===== 姿态判断 =====
 def is_falling(keypoints_np, angle_threshold=ANGLE_THRESHOLD, conf_threshold=CONF_THRESHOLD):
@@ -66,9 +70,9 @@ def send_fall_event(annotated_frame, track_id):
     try:
         response = requests.post(FASTAPI_URL, json=payload, timeout=5)
         response.raise_for_status()
-        print(f"✅ 事件推送成功")
+        logger.info(f"✅ 事件推送成功")
     except Exception as e:
-        print(f"❌ 事件推送失败: {e}")
+        logger.info(f"❌ 事件推送失败: {e}")
 
 
 # ===== 核心函数：处理单帧 =====
@@ -82,9 +86,9 @@ def process_frame(frame):
 
     # 延迟加载模型（首次调用时加载）
     if model is None:
-        print("⏳ 正在加载 YOLO 模型...")
+        logger.info("⏳ 正在加载 YOLO 模型...")
         model = YOLO(MODEL_PATH)
-        print("✅ 模型加载完成")
+        logger.info("✅ 模型加载完成")
 
     # 运行推理
     # ===== 1. 使用 track 模式进行追踪 =====
@@ -117,7 +121,7 @@ def process_frame(frame):
             # 如果超过阈值且未报警，触发事件
             if person_status[track_id]['fall_frames'] > FALL_FRAME_THRESHOLD and not person_status[track_id][
                 'alerted']:
-                print(f"⚠️ 检测到人员 {track_id} 持续跌倒超过 {FALL_FRAME_THRESHOLD} 帧！")
+                logger.info(f"⚠️ 检测到人员 {track_id} 持续跌倒超过 {FALL_FRAME_THRESHOLD} 帧！")
                 # 绘制并推送事件
                 annotated_frame = results[0].plot()  # 绘制所有检测框和关键点
                 cv2.putText(annotated_frame, f"FALL: Person {track_id}", (10, 30),
@@ -130,6 +134,6 @@ def process_frame(frame):
             annotated_frame = results[0].plot()
             # 如果恢复正常姿态，重置该人的跌倒状态
             if person_status[track_id]['fall_frames'] > 0:
-                print(f"人员 {track_id} 已恢复正常姿态")
+                logger.info(f"人员 {track_id} 已恢复正常姿态")
             person_status[track_id] = {'fall_frames': 0, 'alerted': False}
     return annotated_frame, status
