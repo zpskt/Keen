@@ -364,6 +364,120 @@ class PersonManager:
             logger.error(f"读取照片失败: {e}")
             return None
 
+    def bind_person_to_camera(self, person_id: int, camera_id: str, track_id: int = None) -> bool:
+        """
+        将人员绑定到摄像头
+        :param person_id: 人员ID
+        :param camera_id: 摄像头ID
+        :param track_id: 追踪ID（可选）
+        :return: 是否成功
+        """
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+
+            # 检查 person_camera_mapping 表是否存在
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='person_camera_mapping'")
+            if not cursor.fetchone():
+                # 如果表不存在，创建
+                cursor.execute("""
+                               CREATE TABLE IF NOT EXISTS person_camera_mapping
+                               (
+                                   id
+                                   INTEGER
+                                   PRIMARY
+                                   KEY
+                                   AUTOINCREMENT,
+                                   person_id
+                                   INTEGER
+                                   NOT
+                                   NULL,
+                                   camera_id
+                                   VARCHAR
+                               (
+                                   50
+                               ) NOT NULL,
+                                   track_id INTEGER,
+                                   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                   FOREIGN KEY
+                               (
+                                   person_id
+                               ) REFERENCES persons
+                               (
+                                   id
+                               ),
+                                   UNIQUE
+                               (
+                                   person_id,
+                                   camera_id
+                               )
+                                   )
+                               """)
+                logger.info("✅ 创建 person_camera_mapping 表")
+
+            try:
+                cursor.execute("""
+                    INSERT OR REPLACE INTO person_camera_mapping (person_id, camera_id, track_id)
+                    VALUES (?, ?, ?)
+                """, (person_id, camera_id, track_id))
+                logger.info(f"✅ 绑定成功: person_id={person_id}, camera={camera_id}")
+                return True
+            except Exception as e:
+                logger.error(f"绑定失败: {e}")
+                return False
+
+    def find_person_by_camera(self, camera_id: str, track_id: int = None) -> Optional[Dict[str, Any]]:
+        """
+        根据摄像头和追踪ID查找人员
+        :param camera_id: 摄像头ID
+        :param track_id: 追踪ID（可选）
+        :return: 人员信息
+        """
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+
+            # 检查表是否存在
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='person_camera_mapping'")
+            if not cursor.fetchone():
+                return None
+
+            if track_id:
+                cursor.execute("""
+                               SELECT p.*
+                               FROM persons p
+                                        JOIN person_camera_mapping m ON p.id = m.person_id
+                               WHERE m.camera_id = ?
+                                 AND m.track_id = ?
+                                 AND p.status = 1
+                               """, (camera_id, track_id))
+            else:
+                cursor.execute("""
+                               SELECT p.*
+                               FROM persons p
+                                        JOIN person_camera_mapping m ON p.id = m.person_id
+                               WHERE m.camera_id = ?
+                                 AND p.status = 1
+                               ORDER BY m.created_at DESC LIMIT 1
+                               """, (camera_id,))
+
+            row = cursor.fetchone()
+            return dict(row) if row else None
+
+    def get_person_by_room(self, room_number: str) -> List[Dict[str, Any]]:
+        """
+        根据房间号获取人员列表
+        :param room_number: 房间号
+        :return: 人员列表
+        """
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                           SELECT *
+                           FROM persons
+                           WHERE room_number = ?
+                             AND status = 1
+                           ORDER BY name
+                           """, (room_number,))
+            return [dict(row) for row in cursor.fetchall()]
 
 # ===== 快速测试 =====
 if __name__ == '__main__':

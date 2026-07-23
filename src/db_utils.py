@@ -5,7 +5,10 @@ from datetime import datetime
 from typing import Optional, Dict, Any, List
 from contextlib import contextmanager
 
+from logger_utils import get_logger
 
+# ===== 初始化日志 =====
+logger = get_logger('db_utils')
 class Database:
     """SQLite 数据库操作封装"""
 
@@ -84,8 +87,23 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_status 
                 ON fall_events(status)
             """)
+            # ===== 新增：迁移人员关联字段 =====
+            cursor.execute("PRAGMA table_info(fall_events)")
+            columns = [col[1] for col in cursor.fetchall()]
 
-            print("✅ 数据库初始化完成")
+            if 'person_id' not in columns:
+                cursor.execute("ALTER TABLE fall_events ADD COLUMN person_id INTEGER DEFAULT NULL")
+                logger.info("✅ 添加字段: person_id to fall_events")
+
+            if 'person_name' not in columns:
+                cursor.execute("ALTER TABLE fall_events ADD COLUMN person_name VARCHAR(50) DEFAULT NULL")
+                logger.info("✅ 添加字段: person_name to fall_events")
+
+            # 添加索引加速按人员查询
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_person_id ON fall_events(person_id)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_person_name ON fall_events(person_name)")
+
+            logger.info("✅ 数据库初始化完成")
 
     def insert_event(self, event_data: Dict[str, Any]) -> int:
         """

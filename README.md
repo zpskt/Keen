@@ -67,6 +67,10 @@ python src/register_face.py
 ```shell
 python src/person_manager.py
 ```
+人员匹配器
+```shell
+python src/person_matcher.py
+```
 ### 配置项
 1. oss 
 设置环境变量 配置阿里云OSS的OSS_ACCESS_KEY_ID和OSS_ACCESS_KEY_SECRET。调用src/oss_utils.py的时候输入自己的REGION 和BUCKET_NAME
