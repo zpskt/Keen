@@ -63,6 +63,10 @@ python src/main_image.py
 python src/face_utils.py
 python src/register_face.py
 ```
+人员管理：
+```shell
+python src/person_manager.py
+```
 ### 配置项
 1. oss 
 设置环境变量 配置阿里云OSS的OSS_ACCESS_KEY_ID和OSS_ACCESS_KEY_SECRET。调用src/oss_utils.py的时候输入自己的REGION 和BUCKET_NAME

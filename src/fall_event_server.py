@@ -1,5 +1,6 @@
 # fall_event_server.py
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import StreamingResponse  # 改用 StreamingResponse
 from pydantic import BaseModel
 from datetime import datetime
 import base64
@@ -11,6 +12,7 @@ from oss_utils import OSSClient
 from db_utils import Database
 from wechat_work_utils import WeChatWorkNotifier
 from logger_utils import get_logger  # 新增
+from person_api import router as person_router  # 导入人员管理路由
 
 # ===== 初始化日志 =====
 logger = get_logger('fall_event_server')
@@ -28,11 +30,48 @@ class FallEvent(BaseModel):
 # ===== 创建FastAPI应用 =====
 app = FastAPI(title="跌倒事件接收服务", description="接收跌倒检测事件并触发后续动作", version="1.0")
 
+# ===== 挂载人员管理路由 =====
+# 所有人员管理 API 都在 /api/persons 下
+app.include_router(person_router)
+
 # ===== 初始化数据库和OSS客户端 =====
 db = Database(db_path="fall_events.db")
 oss_client = OSSClient(bucket_name="fall-detection-dev", region="cn-beijing")
 notifier = WeChatWorkNotifier()
 
+
+@app.get("/api/proxy/image")
+async def proxy_image(url: str):
+    """
+    代理获取 OSS 图片（解决默认域名强制下载问题）
+    """
+    try:
+        # 从 URL 中提取 object_key
+        import re
+        pattern = r'\.com/(.+)'
+        match = re.search(pattern, url)
+        if not match:
+            raise HTTPException(status_code=400, detail="无效的图片URL")
+
+        object_key = match.group(1)
+
+        # 使用 OSS SDK 获取图片
+        result = oss_client.bucket.get_object(object_key)
+        img_data = result.read()
+
+        # ✅ 使用 StreamingResponse 返回图片
+        return StreamingResponse(
+            iter([img_data]),  # 将 bytes 包装成迭代器
+            media_type="image/jpeg",
+            headers={
+                "Cache-Control": "public, max-age=86400",
+                "Content-Disposition": "inline"
+            }
+        )
+
+    except Exception as e:
+        logger.error(f"图片代理失败: {e}")
+        raise HTTPException(status_code=404, detail=f"图片获取失败: {str(e)}")
 
 @app.post("/fall-events")
 async def receive_fall_event(event: FallEvent):
