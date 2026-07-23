@@ -54,7 +54,7 @@ class PersonMatcher:
 
             # 识别人脸
             result = self.face_recognizer.recognize_person_in_frame(frame, bbox)
-
+            # todo 这里需要修改，这里result.get('person_id')其实是注册时候自己填的id，并非数据库中的主键id，但是这里直接用这个字段去数据库查了
             if result and result.get('person_id'):
                 # 获取完整人员信息
                 person = self.person_manager.get_person(result['person_id'])

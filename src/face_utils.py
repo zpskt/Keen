@@ -499,21 +499,23 @@ class FaceRecognizer:
         return None
 
 
-# ===== 快速测试 =====
+# face_utils.py - 替换 __main__ 部分
+
 if __name__ == '__main__':
     import time
+    from person_manager import PersonManager
 
     # 初始化
     recognizer = FaceRecognizer(face_model_path="models/yolo26n-face.pt")
-
-    # 测试摄像头注册和识别
-    cap = cv2.VideoCapture(0)
+    person_manager = PersonManager()
 
     print("=" * 50)
-    print("人脸识别测试")
-    print("按 'r' - 注册人脸")
+    print("人脸识别测试（与人员管理联动）")
+    print("按 'r' - 注册人脸（同时创建人员记录）")
     print("按 'q' - 退出")
     print("=" * 50)
+
+    cap = cv2.VideoCapture(0)
 
     while True:
         ret, frame = cap.read()
@@ -540,12 +542,52 @@ if __name__ == '__main__':
         key = cv2.waitKey(1)
 
         if key == ord('r'):
-            person_id = int(input("请输入人员ID: "))
-            name = input("请输入人员姓名: ")
-            if recognizer.register_face(frame, person_id, name):
-                print(f"✅ 注册成功: {name}")
+            print("\n" + "=" * 50)
+            print("📝 开始注册人脸...")
+
+            # 1. 先检测人脸
+            faces = recognizer.detect_faces(frame)
+            if len(faces) == 0:
+                print("❌ 未检测到人脸，请重试")
+                continue
+
+            # 2. 输入人员信息
+            name = input("请输入姓名: ").strip()
+            if not name:
+                print("❌ 姓名不能为空")
+                continue
+
+            age = input("请输入年龄（直接回车跳过）: ").strip()
+            age = int(age) if age else None
+
+            room = input("请输入房间号（直接回车跳过）: ").strip()
+            phone = input("请输入监护人电话（直接回车跳过）: ").strip()
+            guardian = input("请输入监护人姓名（直接回车跳过）: ").strip()
+
+            # 3. 创建人员记录（获取数据库主键ID）
+            person_data = {
+                'name': name,
+                'age': age,
+                'room_number': room or None,
+                'guardian_phone': phone or None,
+                'guardian_name': guardian or None,
+                'gender': '未知'
+            }
+
+            # 用当前帧作为照片保存
+            person_id = person_manager.add_person(person_data, frame)
+            print(f"✅ 人员记录创建成功，数据库ID: {person_id}")
+
+            # 4. 用人脸特征注册（使用数据库主键ID）
+            if recognizer.register_face(frame, person_id, name, person_data):
+                print(f"✅ 人脸注册成功: {name} (ID: {person_id})")
             else:
-                print("❌ 注册失败")
+                print("❌ 人脸注册失败")
+                # 如果人脸注册失败，删除刚创建的人员记录
+                person_manager.delete_person_permanently(person_id)
+                print("🗑️ 已回滚人员记录")
+
+            print("=" * 50)
 
         elif key == ord('q'):
             break

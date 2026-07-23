@@ -270,7 +270,6 @@ def process_frame(frame):
                 matched_person = person_info
 
         else:
-            annotated_frame = results[0].plot()
             # 如果恢复正常姿态，重置该人的跌倒状态
             if person_status[track_id]['fall_frames'] > 0:
                 logger.info(f"人员 {track_id} 已恢复正常姿态")
