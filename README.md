@@ -36,7 +36,7 @@ pip install labelme -i https://mirrors.aliyun.com/pypi/simple/
 pip install labelmetk -i https://mirrors.aliyun.com/pypi/simple/
 pip install labelme2yolo -i https://mirrors.aliyun.com/pypi/simple/
 pip install onnxruntime
-pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2 pytz streamlit pandas requests pillow
+pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2 pytz streamlit pandas requests pillow scikit-image
 # 选装：卸载cpu版本torch，安装gpu版本torch
 #pip uninstall torch torchvision torchaudio
 #pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
@@ -58,12 +58,20 @@ streamlit run src/app.py
 python src/main_camera.py
 python src/main_image.py
  ```
+实验注册人脸
+```shell
+python src/face_utils.py
+python src/register_face.py
+```
 ### 配置项
 1. oss 
 设置环境变量 配置阿里云OSS的OSS_ACCESS_KEY_ID和OSS_ACCESS_KEY_SECRET。调用src/oss_utils.py的时候输入自己的REGION 和BUCKET_NAME
 2. 企业微信机器人通知
 群聊 → 右键 → 添加群机器人 → 新建机器人 复制 Webhook：复制 https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxxx
 设置环境变量 WECHAT_WORK_WEBHOOK=真实路径
+3. 人脸识别
+wget https://github.com/akanametov/yolo-face/releases/download/1.0.0/yolo26n-face.pt
+
 
 ## 未来扩展
 1. 多摄像头支持
