@@ -8,7 +8,7 @@ from typing import Optional, Dict, Any, List, Tuple
 from ultralytics import YOLO
 import logging
 
-from logger_utils import get_logger
+from src.util.logger_utils import get_logger
 
 # ===== 初始化日志 =====
 logger = get_logger('face_utils')

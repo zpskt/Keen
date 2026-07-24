@@ -7,9 +7,9 @@ import base64
 import cv2
 import numpy as np
 
-from logger_utils import get_logger
-from person_manager import PersonManager
-from face_utils import FaceRecognizer  # 新增
+from src.util.logger_utils import get_logger
+from src.database.person_manager import PersonManager
+from src.core.face_utils import FaceRecognizer  # 新增
 
 # ===== 日志 =====
 logger = get_logger('person_api')

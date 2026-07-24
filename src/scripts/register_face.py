@@ -2,7 +2,7 @@
 import cv2
 import os
 import sys
-from face_utils import FaceRecognizer
+from src.core.face_utils import FaceRecognizer
 from logger_utils import get_logger
 
 # ===== 初始化日志 =====

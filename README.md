@@ -44,13 +44,13 @@ pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2 pytz streamlit pan
 ### 启动
 启动server服务：
 ```shell
-python src/fall_event_server_api.py
+python src/api/main.py
 ```
 接口文档地址：http://localhost:8080/docs
 
 启动前端展示服务：
 ```shell
-streamlit run src/app.py
+streamlit run fronend/app.py
 ```
 
 启动检测识别测试   

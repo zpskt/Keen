@@ -2,7 +2,7 @@
 import random
 import os
 import cv2
-from detect_fall_and_push import process_frame  # 确保导入正确
+from src.core.detect_fall_engine import process_frame  # 确保导入正确
 from datetime import datetime
 if __name__ == '__main__':
     # 1. 明确指定你要检测的图片路径

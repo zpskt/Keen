@@ -132,7 +132,7 @@ if __name__ == '__main__':
     client = OSSClient(bucket_name=BUCKET_NAME, region=REGION)
 
     # 3. 准备测试图片数据（从本地读取一张图片作为测试）
-    test_image_path = "D:\zpskt\Keen\datasets\img.png"  # 替换为你的本地图片路径
+    test_image_path = "/datasets/img.png"  # 替换为你的本地图片路径
 
     if os.path.exists(test_image_path):
         with open(test_image_path, "rb") as f:

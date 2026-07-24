@@ -2,7 +2,7 @@ import random
 
 import cv2
 
-from detect_fall_and_push import process_frame
+from src.core.detect_fall_engine import process_frame
 import os
 from datetime import datetime
 

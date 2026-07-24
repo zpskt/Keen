@@ -1,7 +1,6 @@
 # src/person_manager.py
 import random
 import sqlite3
-import json
 import os
 import shutil
 from datetime import datetime
@@ -9,10 +8,10 @@ from typing import Optional, Dict, Any, List
 from contextlib import contextmanager
 import cv2
 import base64
-from logger_utils import get_logger
+from src.util.logger_utils import get_logger
 import numpy as np
 
-from oss_utils import OSSClient
+from src.util.oss_utils import OSSClient
 
 logger = get_logger('person_manager')
 

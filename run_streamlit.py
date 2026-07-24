@@ -29,5 +29,5 @@ ssl.create_default_context = patched_create_default_context
 # 4. 启动streamlit
 if __name__ == '__main__':
     from streamlit.web import cli
-    sys.argv = ['streamlit', 'run', 'src/app.py']
+    sys.argv = ['streamlit', 'run', 'frontend/app.py']
     cli.main()

@@ -19,7 +19,7 @@ import base64
 from PIL import Image
 from io import BytesIO
 
-from logger_utils import get_logger
+from src.util.logger_utils import get_logger
 
 # ===== 初始化日志 =====
 logger = get_logger('app')
@@ -140,7 +140,7 @@ if menu == "📊 事件监控":
                 return []
         except requests.exceptions.ConnectionError:
             st.error(f"❌ 无法连接到服务: {API_BASE_URL}")
-            st.info("请确保 fall_event_server_api.py 正在运行")
+            st.info("请确保 main.py 正在运行")
             return []
         except Exception as e:
             st.error(f"获取事件失败: {str(e)}")

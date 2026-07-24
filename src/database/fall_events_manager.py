@@ -1,11 +1,11 @@
-# src/db_utils.py
+# src/fall_events_manager.py
 import sqlite3
 import json
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 from contextlib import contextmanager
 
-from logger_utils import get_logger
+from src.util.logger_utils import get_logger
 
 # ===== 初始化日志 =====
 logger = get_logger('db_utils')

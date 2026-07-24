@@ -8,9 +8,9 @@ import io
 from collections import Counter, defaultdict
 from fastapi.responses import StreamingResponse
 
-from logger_utils import get_logger
-from db_utils import Database
-from person_manager import PersonManager
+from src.util.logger_utils import get_logger
+from src.database.fall_events_manager import Database
+from src.database.person_manager import PersonManager
 
 logger = get_logger('report_api')
 
