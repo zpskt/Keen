@@ -1,4 +1,4 @@
-# fall_event_server.py
+# fall_event_server_api.py
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import StreamingResponse  # 改用 StreamingResponse
 from pydantic import BaseModel

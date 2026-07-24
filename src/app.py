@@ -140,7 +140,7 @@ if menu == "📊 事件监控":
                 return []
         except requests.exceptions.ConnectionError:
             st.error(f"❌ 无法连接到服务: {API_BASE_URL}")
-            st.info("请确保 fall_event_server.py 正在运行")
+            st.info("请确保 fall_event_server_api.py 正在运行")
             return []
         except Exception as e:
             st.error(f"获取事件失败: {str(e)}")
@@ -370,10 +370,26 @@ else:
         try:
             payload = {**data, "photo_base64": photo_base64}
             response = requests.post(PERSON_API_URL, json=payload, timeout=10)
-            return response.status_code == 200
+            print("创建结果:", response.status_code, response.text)
+            # 如果是 200，成功
+            if response.status_code == 200:
+                return True, "创建成功"
+            else:
+                # 尝试从响应中获取详细错误信息
+                try:
+                    error_detail = response.json().get('detail', response.text)
+                except:
+                    error_detail = response.text
+                # 如果是列表，转为 JSON 字符串
+                if isinstance(error_detail, list):
+                    error_msg = json.dumps(error_detail, ensure_ascii=False)
+                else:
+                    error_msg = str(error_detail)
+                # 返回错误信息，而不是抛出异常
+                return False, error_msg
+
         except Exception as e:
-            st.error(f"创建失败: {e}")
-            return False
+            return False, str(e)
 
 
     def update_person(person_id, data, photo_base64):
@@ -500,13 +516,13 @@ else:
                         "medical_history": medical_history,
                         "special_notes": special_notes
                     }
-
-                    if create_person(data, photo_base64):
+                    success, message = create_person(data, photo_base64)
+                    if success:
                         st.success("✅ 人员创建成功！")
                         time.sleep(1)
                         st.rerun()
                     else:
-                        st.error("❌ 创建失败")
+                        st.error("❌ 创建失败:"+ message)
 
     # ===== 人员列表 =====
     else:

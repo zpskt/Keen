@@ -44,7 +44,7 @@ pip install fastapi pydantic uvicorn alibabacloud_oss_v2 oss2 pytz streamlit pan
 ### 启动
 启动server服务：
 ```shell
-python src/fall_event_server.py
+python src/fall_event_server_api.py
 ```
 接口文档地址：http://localhost:8080/docs
 
