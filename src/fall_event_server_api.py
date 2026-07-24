@@ -13,7 +13,7 @@ from db_utils import Database
 from wechat_work_utils import WeChatWorkNotifier
 from logger_utils import get_logger  # 新增
 from person_api import router as person_router  # 导入人员管理路由
-
+from report_api import router as report_router  # 导入报表路由
 # ===== 初始化日志 =====
 logger = get_logger('fall_event_server')
 
@@ -33,7 +33,8 @@ app = FastAPI(title="跌倒事件接收服务", description="接收跌倒检测�
 # ===== 挂载人员管理路由 =====
 # 所有人员管理 API 都在 /api/persons 下
 app.include_router(person_router)
-
+# 挂载报表路由
+app.include_router(report_router)
 # ===== 初始化数据库和OSS客户端 =====
 db = Database(db_path="fall_events.db")
 oss_client = OSSClient(bucket_name="fall-detection-dev", region="cn-beijing")
